@@ -1,0 +1,92 @@
+---
+#### BeatDiabet.es landing page Ansible deployment playbook
+#
+# Overview: Playbook to bootstrap a new host for configuration management.
+#           based on http://practicalops.com/my-first-5-minutes-on-a-server.html
+# Applies to: production
+# Description:
+#    Ensures that a host is configured for management with Ansible.
+#
+###########
+
+- hosts: newservers
+  user: vagrant
+  sudo: True
+
+  tasks:
+
+    - name: install python-software-properties
+      action: apt pkg=python-software-properties state=present
+
+    - name: add postgres key
+      apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+
+    - name: add postgres repo
+      apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' state=present
+
+    - name: add nodejs ppa
+      action: apt_repository repo=ppa:chris-lea/node.js state=present
+
+    - name: add ansible ppa
+      action: apt_repository repo=ppa:rquillo/ansible state=present
+
+    - name: update apt
+      action: command /usr/bin/apt-get update
+
+    - name: upgrade apt
+      action: command /usr/bin/apt-get upgrade
+
+    - name: install web server packages
+      action: apt pkg=$item state=installed
+      with_items:
+        - htop
+        - screen
+        - aptitude
+        - fail2ban
+        - logwatch
+        - git
+        - unzip
+        - build-essential
+        - zlib1g-dev
+        - libpcre3
+        - libpcre3-dev
+        - libssl-dev
+        - geoip-database
+        - libgeoip-dev
+        - libxslt-dev
+        - libgd2-xpm-dev
+        - postgresql-9.2
+        - postgresql-contrib
+        - openssh-server
+        - redis-server
+        - pgadmin3
+        - curl
+        - iperf
+        - nodejs
+        - upstart
+        - monit
+        - ntp
+        - pwgen
+        - mlocate
+        - unattended-upgrades
+
+    - name: remove default nginx site
+      action: file path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: write nginx.conf
+      action: template src=templates/nginx.conf dest=/etc/nginx/nginx.conf
+
+    - name: create supervisord config folder
+      action: file dest=/etc/supervisor state=directory owner=root
+
+    - name: create supervisord config
+      action: template src=templates/supervisord.conf dest=/etc/supervisord.conf
+
+    - name: create supervisord init script
+      action: template src=templates/supervisord.sh dest=/etc/init.d/supervisord mode=0755
+
+    - name: start supervisord service and have it run during system startup
+      action: service name=supervisord state=started enabled=yes
+
+    - name: create webapps directory
+      action: file dest=/srv/webapps state=directory
