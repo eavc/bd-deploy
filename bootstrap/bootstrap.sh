@@ -29,6 +29,18 @@
 
 
 # =====================================
+# UPDATE SOURCES AND UPGRADE SOFTWARE
+echo "\033[1;34mUpdating sources\033[0m"
+apt-get update && apt-get upgrade -y
+if [ $? -eq 0 ]
+then
+  echo "\033[1;32mSuccessfully updated sources\033[0m"
+else
+  echo "\033[1;31mError updating sources\033[0m"
+fi
+
+
+# =====================================
 # INSTALL PYTHON AND SOFTWARE PROPERTIES
 echo "\033[1;34mInstalling python and python-software-properties\033[0m"
 apt-get install -y python python-software-properties g++ make
