@@ -1,0 +1,10 @@
+### Nginx upstart script
+### source: http://serverfault.com/a/391737/70451
+### /etc/init/nginx.conf
+
+description "nginx http daemon"
+start on runlevel 2
+stop on runlevel [016]
+console output
+exec /opt/nginx/nginx -c /opt/nginx/nginx.conf  -g "daemon off;"
+respawn
