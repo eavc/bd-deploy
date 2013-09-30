@@ -12,24 +12,26 @@
 - hosts: newservers
   user: vagrant
   sudo: True
+  vars:
+  - ubuntu_release: precise
+  - logwatch_email: enrique@beatdiabet.es
 
   tasks:
+  - name: Remove sudo group rights
+    action: lineinfile dest=/etc/sudoers regexp="^%sudo" state=absent
 
-    - name: Remove sudo group rights
-      action: lineinfile dest=/etc/sudoers regexp="^%sudo" state=absent
+  - name: Add deploy user to sudoers
+    action: lineinfile dest=/etc/sudoers regexp="deploy ALL" line="deploy ALL=(ALL) ALL" state=present
 
-    - name: Add deploy user to sudoers
-      action: lineinfile dest=/etc/sudoers regexp="deploy ALL" line="deploy ALL=(ALL) ALL" state=present
+  - name: write sshd_config
+    action: template src=templates/system/sshd_config  dest=/etc/ssh/sshd_config
+    notify: Restart sshd
 
-    - name: write sshd_config
-      action: template src=templates/system/sshd_config  dest=/etc/ssh/sshd_config
-      notify: Restart sshd
+  - name: Adjust APT update intervals
+    action: copy src=templates/system/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
 
-    - name: Adjust APT update intervals
-      action: copy src=templates/system/apt_periodic dest=/etc/apt/apt.conf.d/10periodic
-
-    - name: Make sure unattended-upgrades only installs from $ubuntu_release-security
-      action: lineinfile dest=/etc/apt/apt.conf.d/50unattended-upgrades regexp="$ubuntu_release-updates" state=absent
+  - name: Make sure unattended-upgrades only installs from $ubuntu_release-security
+    action: lineinfile dest=/etc/apt/apt.conf.d/50unattended-upgrades regexp="$ubuntu_release-updates" state=absent
 
   - name: Copy debconf selections so that Postfix can configure itself non-interactively
     copy: src=templates/system/postfix_selections  dest=/tmp/postfix_selections
@@ -44,19 +46,10 @@
     action: file path=/etc/nginx/sites-enabled/default state=absent
 
   - name: write nginx.conf
-    action: template src=templates/nginx.conf dest=/etc/nginx/nginx.conf
+    action: template src=templates/nginx/nginx.conf dest=/opt/nginx/nginx.conf
 
-   - name: create supervisord config folder
-    action: file dest=/etc/supervisor state=directory owner=root
-
-  - name: create supervisord config
-    action: template src=templates/supervisord.conf dest=/etc/supervisord.conf
-
-  - name: create supervisord init script
-    action: template src=templates/supervisord.sh dest=/etc/init.d/supervisord mode=0755
-
-  - name: start supervisord service and have it run during system startup
-    action: service name=supervisord state=started enabled=yes
+  - name: write mime.types
+    action: template src=templates/nginx/mime.types dest=/opt/nginx/mime.types
 
   - name: create webapps directory
     action: file dest=/srv/webapps state=directory
