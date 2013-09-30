@@ -40,8 +40,8 @@ else
 fi
 
 # =====================================
-# ADD POSTGRESQL REPOS
-echo "\033[1;34mAdding PostgreSQL keys and repos\033[0m"
+# ADD POSTGRESQL REPO
+echo "\033[1;34mAdding PostgreSQL keys and repo\033[0m"
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
 echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /etc/apt/sources.list.d/postgresql.list
 if [ $? -eq 0 ]
@@ -105,11 +105,11 @@ apt-get install -y \
 				libgeoip-dev \
 				libxslt-dev \
 				libgd2-xpm-dev \
-				postgresql-9.2 \
+				postgresql-9.3 \
+				pgadmin3 \
 				postgresql-contrib \
 				openssh-server \
 				redis-server \
-				pgadmin3 \
 				curl \
 				iperf \
 				nodejs \
