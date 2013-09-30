@@ -214,13 +214,13 @@ cd ../.. &&
             --with-mail \
             --with-mail_ssl_module \
             --with-http_gzip_static_module\
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/ngx_http_auth_request_module \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/ngx_http_redis-0.3.5 \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/ndk \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/nginx_accept_language_module \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/nginx-upstream-fair \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/echo-nginx-module \
-            --add-module=$HOME/sources/nginx-1.5.0/vendor/ngx_pagespeed &&
+            --add-module=vendor/ngx_http_auth_request_module \
+            --add-module=vendor/ngx_http_redis-0.3.5 \
+            --add-module=vendor/ndk \
+            --add-module=vendor/nginx_accept_language_module \
+            --add-module=vendor/nginx-upstream-fair \
+            --add-module=vendor/echo-nginx-module \
+            --add-module=vendor/ngx_pagespeed &&
 make -j 2 &&
 checkinstall
 #chown nginx:nginx /var/cache/nginx /usr/local/nginx/{fastcgi_temp,logs,proxy_temp}
