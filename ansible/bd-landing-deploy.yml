@@ -21,6 +21,9 @@
     - name: write nginx.conf
       action: template src=templates/nginx/nginx.conf dest=/etc/nginx/nginx.conf
 
+    - name: write nginx upstart script
+      action: template src=templates/system/nginx.conf dest=/etc/init/nginx.conf
+
     - name: create supervisord config folder
       action: file dest=/etc/supervisor state=directory owner=root
 
