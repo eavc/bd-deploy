@@ -122,6 +122,7 @@ apt-get install -y \
 				postgresql-contrib \
 				openssh-server \
 				redis-server \
+				libsasl2-modules \
 				curl \
 				iperf \
 				nodejs \
